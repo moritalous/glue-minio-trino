@@ -6,7 +6,7 @@ services:
     image: amazon/aws-glue-libs:glue_libs_3.0.0_image_01
     restart: always
     volumes:
-      - ./.aws:/home/glue_user/.aws
+      - ./.aws:/home/glue_user/.aws:ro
       - ./jupyter_workspace:/home/glue_user/workspace/jupyter_workspace/
       - ./glue/spark/core-site.xml:/home/glue_user/spark/conf/core-site.xml
       - ./glue/spark/hive-site.xml:/home/glue_user/spark/conf/hive-site.xml
@@ -38,7 +38,7 @@ services:
   trino:
     image: trinodb/trino
     volumes:
-      - ./.aws:/home/trino/.aws
+      - ./.aws:/home/trino/.aws:ro
       - ./trino/catalog/s3.properties:/etc/trino/catalog/s3.properties
       - ./trino/catalog/minio.properties:/etc/trino/catalog/minio.properties
     environment:
@@ -53,7 +53,7 @@ services:
       context: hive-metastore/
       dockerfile: Dockerfile
     volumes:
-      - ./.aws:/home/hive/.aws
+      - ./.aws:/home/hive/.aws:ro
       - ./hive-metastore/work:/work
       - ./hive-metastore/metastore-site.xml:/opt/apache-hive-metastore/conf/metastore-site.xml
       
