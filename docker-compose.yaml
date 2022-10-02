@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+
+  glue:
+    image: amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+    restart: always
+    volumes:
+      - ./.aws:/home/glue_user/.aws
+      - ./jupyter_workspace:/home/glue_user/workspace/jupyter_workspace/
+      - ./glue/spark/core-site.xml:/home/glue_user/spark/conf/core-site.xml
+      - ./glue/spark/hive-site.xml:/home/glue_user/spark/conf/hive-site.xml
+    environment:
+      - AWS_PROFILE=default
+      - DISABLE_SSL=true
+    ports:
+      - 4040:4040
+      - 18080:18080
+      - 8998:8998
+      - 8888:8888
+    command: ["/home/glue_user/jupyter/jupyter_start.sh"]
+    depends_on:
+      - minio
+
+  minio:
+    image: quay.io/minio/minio
+    hostname: bucket001.minio
+    restart: always
+    volumes:
+      - ./minio/data:/data
+    environment:
+      - MINIO_DOMAIN=minio
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  trino:
+    image: trinodb/trino
+    volumes:
+      - ./.aws:/home/trino/.aws
+      - ./trino/catalog/s3.properties:/etc/trino/catalog/s3.properties
+      - ./trino/catalog/minio.properties:/etc/trino/catalog/minio.properties
+    environment:
+      - AWS_PROFILE=default
+    ports:
+      - 8080:8080
+    depends_on:
+      - hive-metastore
+  
+  hive-metastore:
+    build:
+      context: hive-metastore/
+      dockerfile: Dockerfile
+    volumes:
+      - ./.aws:/home/hive/.aws
+      - ./hive-metastore/work:/work
+      - ./hive-metastore/metastore-site.xml:/opt/apache-hive-metastore/conf/metastore-site.xml
+      
+    working_dir: /work
+    environment:
+      - AWS_PROFILE=default
+    ports:
+      - "9083:9083"

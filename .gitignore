@@ -1,0 +1,8 @@
+hive-metastore/work/*
+!hive-metastore/work/.gitkeep
+
+jupyter_workspace/*
+!jupyter_workspace/.gitkeep
+
+minio/data/*
+!minio/data/.gitkeep
