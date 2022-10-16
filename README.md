@@ -12,13 +12,6 @@
     sudo chown -R 10000.root jupyter_workspace
     ```
 
-3. Create bucket
-
-    in notebook shell
-
-    ```
-    aws s3 mb s3://bucket001 --endpoint-url http://minio:9000
-    ```
 
 ## start
 

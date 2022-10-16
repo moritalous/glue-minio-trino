@@ -3,6 +3,7 @@ hive-metastore/work/*
 
 jupyter_workspace/*
 !jupyter_workspace/.gitkeep
+!jupyter_workspace/*.ipynb
 
 minio/data/*
 !minio/data/.gitkeep
